@@ -17,13 +17,14 @@
 				<p :class="{intervalActive:priceInterval=='3'}" @click="onPriceInterval('3')">1000.00-5000.00</p>
 			</div>
 			<div class="proudct-list">
-				<mu-card class="proudct-listitem" v-for="(item,index) in proudctList">
+				<mu-card class="proudct-listitem" v-for="item in proudctList">
 					<mu-card-media >
 						<img :src="item.productImage" />
 					</mu-card-media>
 					<mu-card-text>
 						<h3>{{item.productName}}</h3>
-						<p><span class="salePrice">￥{{item.salePrice.toFixed(2)}}</span><span class="orginPrice">{{item.orginPrice.toFixed(2)}}</span></p>
+						<p><span class="salePrice">￥{{item.salePrice | priceTofixed}}</span><span class="orginPrice">{{item.orginPrice | priceTofixed}}</span></p>
+						<div class="addcart" @click="addCart(item.productId)">加入购物车</div>
 					</mu-card-text>
 				</mu-card>	
 			</div>
@@ -50,7 +51,7 @@
 				priceSort:0,
 				priceInterval:'all',
 				page:1,
-				pageSize:3,
+				pageSize:5,
 			}
 		},
 		computed:{
@@ -78,7 +79,7 @@
 					}
 				}).then((res)=>{
 					this.total=res.data.total;
-					this.paginationshow=true;
+					this.paginationshow=true;					
 					this.proudctList=res.data.data;
 				})
 			},
@@ -106,6 +107,18 @@
 			handleClick(newIndex){
 				this.page=newIndex;
 				this._getproudctList();
+			},
+			//加入购物车
+			addCart(productId){
+				axios.post('/goods/addcart',{
+					productId:productId
+				}).then((res)=>{
+					if(res.data.status==0){
+						alert("success");
+					}else{
+						alert('msg'+res.msg);
+					}
+				})
 			}
 		}
 		
@@ -163,16 +176,16 @@
 				float: left;
 				width: 240px;
 				margin: 5px;
-				cursor: pointer;
 				&:hover{
-					transform: scale(1.1);
-					transition: all 0.5s; 
+					// border: 1px solid red; 
+					box-shadow: 0px 0px 10px 3px #cccccc;
 					position: relative;
 					z-index: 10;
 				}
 				img{
 					width: 240px;
 					height: 240px;
+					cursor: pointer;
 				}
 				.salePrice{
 					color: red;
@@ -182,6 +195,20 @@
 				}
 				.orginPrice{
 					text-decoration: line-through;
+				}
+				.addcart{
+					width: 90%;
+					height: 30px;
+					border: 1px solid red;
+					color: #FF0000;
+					margin:  0 auto;
+					text-align: center;
+					line-height: 30px;
+					cursor: pointer;
+					&:hover{
+						color: #fff;
+						background: #FF0000;
+					}
 				}
 			}
 		}

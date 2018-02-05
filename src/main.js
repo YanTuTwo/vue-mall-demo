@@ -8,6 +8,16 @@ Vue.use(MuseUI);
 
 Vue.config.productionTip = false
 
+
+//价格过滤器
+Vue.filter('priceTofixed', function (value) {
+  if (!value) return ''
+  value = Number(value);
+  return value.toFixed(2);
+})
+
+
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
